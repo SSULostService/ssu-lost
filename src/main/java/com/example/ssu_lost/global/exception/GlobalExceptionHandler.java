@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
@@ -29,7 +30,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // @Valid나 @Validation에서 유효성 검증 실패했을 때
     @Override
-    protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValid(
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ErrorCode errorCode = ErrorCode._BAD_REQUEST;
         String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
@@ -37,9 +38,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, errorCode.getHttpStatus());
     }
 
-    //Path Variable 타입 불일치 예외처리
     @Override
-    protected ResponseEntity<ApiResponse<Object>> handleTypeMismatch(
+    protected ResponseEntity<Object> handleTypeMismatch(
             TypeMismatchException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         ErrorCode errorCode = ErrorCode._BAD_REQUEST;
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 e.getPropertyName(),
                 e.getRequiredType().getSimpleName());
 
-        ApiResponse<Object> response = ApiResponse.onFailure(errorCode, null);
+        ApiResponse<Object> response = ApiResponse.onFailure(errorCode, message, null);
 
         return new ResponseEntity<>(response, errorCode.getHttpStatus());
     }
