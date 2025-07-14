@@ -24,7 +24,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(GeneralException.class)
     public ResponseEntity<ApiResponse<Object>> handleGeneralException(GeneralException e) {
         ErrorCode errorCode = e.getErrorCode();
-        ApiResponse<Object> response = ApiResponse.onFailure(errorCode, null);
+        ApiResponse<Object> response = ApiResponse.onFailure(errorCode);
         return new ResponseEntity<>(response, errorCode.getHttpStatus());
     }
 
@@ -34,8 +34,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ErrorCode errorCode = ErrorCode._BAD_REQUEST;
         String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-        ApiResponse<Object> response = ApiResponse.onFailure(errorCode, null);
-        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+        return new ResponseEntity<>(
+                ApiResponse.onFailure(errorCode, message, null),
+                errorCode.getHttpStatus()
+        );
     }
 
     @Override
@@ -47,16 +49,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 e.getPropertyName(),
                 e.getRequiredType().getSimpleName());
 
-        ApiResponse<Object> response = ApiResponse.onFailure(errorCode, message, null);
-
-        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+        return new ResponseEntity<>(
+                ApiResponse.onFailure(errorCode, message, null),
+                errorCode.getHttpStatus()
+        );
     }
 
     // 지정되지 않은 모든 예외 처리
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleAllExceptions(Exception e) {
         ErrorCode errorCode = ErrorCode._INTERNAL_SERVER_ERROR;
-        ApiResponse<Object> response = ApiResponse.onFailure(errorCode, null);
-        return new ResponseEntity<>(response, errorCode.getHttpStatus());
+        return new ResponseEntity<>(
+                ApiResponse.onFailure(errorCode),
+                errorCode.getHttpStatus()
+        );
     }
 }

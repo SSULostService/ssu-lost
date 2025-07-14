@@ -36,8 +36,22 @@ public class ApiResponse<T> {
         );
     }
 
+    public static <T> ApiResponse<T> onFailure(ErrorCode code) {
+        return new ApiResponse<>(
+                false,
+                code.getCode(),
+                code.getMessage(),
+                null
+        );
+    }
+
     // 동적으로 생성한 상세 메시지 사용
     public static <T> ApiResponse<T> onFailure(ErrorCode code, String message, T result) {
-        return new ApiResponse<>(false, code.getCode(), message, result);
+        return new ApiResponse<>(
+                false,
+                code.getCode(),
+                message,
+                result
+        );
     }
 }
