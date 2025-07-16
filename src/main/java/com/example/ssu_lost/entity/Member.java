@@ -15,10 +15,10 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @Column(nullable = false, length = 50)
-    private String userName;
+    private String memberName;
 
     @Column(nullable = false)
     private String oAuthProvider;
