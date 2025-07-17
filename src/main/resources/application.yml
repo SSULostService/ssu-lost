@@ -17,6 +17,10 @@ spring:
         show_sql: true
         format_sql: true
 
+  kakao:
+    client_id: ${REST_API_KEY}
+    redirect_uri: http://localhost:8080/callback
+
   web:
     resources:
       add-mappings: false
