@@ -1,6 +1,9 @@
 name: CI/CD Docker SpringBoot
 
 on:
+
+  workflow_dispatch:
+
   push:
     branches: [ "main" ]
 
