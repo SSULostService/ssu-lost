@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Builder
@@ -14,8 +16,8 @@ import org.hibernate.annotations.DynamicUpdate;
 public class Member extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "member_id", columnDefinition = "Binary(16)")
+    private UUID id;
 
     @Column(nullable = false, length = 50)
     private String memberName;
