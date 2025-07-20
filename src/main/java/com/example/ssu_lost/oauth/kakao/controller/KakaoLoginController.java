@@ -1,7 +1,9 @@
-package com.example.ssu_lost.oauth.kakao;
+package com.example.ssu_lost.oauth.kakao.controller;
 
 import com.example.ssu_lost.global.code.ResponseCode;
 import com.example.ssu_lost.global.response.ApiResponse;
+import com.example.ssu_lost.oauth.kakao.dto.KakaoUserInfoDto;
+import com.example.ssu_lost.oauth.kakao.service.KakaoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +24,8 @@ public class KakaoLoginController {
 
         String accessToken = kakaoService.getAccessTokenFromKakao(code);
 
+        KakaoUserInfoDto kakaoUserInfoDto = kakaoService.getUserInfoFromKakao(accessToken);
 
-        return ApiResponse.onSuccess(ResponseCode.OK, code);
+        return ApiResponse.onSuccess(ResponseCode.OK, kakaoUserInfoDto);
     }
 }

@@ -1,6 +1,7 @@
-package com.example.ssu_lost.oauth.kakao;
+package com.example.ssu_lost.oauth.kakao.service;
 
-import lombok.RequiredArgsConstructor;
+import com.example.ssu_lost.oauth.kakao.dto.KakaoTokenDto;
+import com.example.ssu_lost.oauth.kakao.dto.KakaoUserInfoDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,11 +31,29 @@ public class KakaoService {
         params.add("redirect_uri", redirectUri);
         params.add("code", code);
 
-        return webClient.post()
+        KakaoTokenDto kakaoTokenResponseDto = webClient.post() // post 요청
                 .uri("/oauth/token")
                 .bodyValue(params)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(KakaoTokenDto.class)
+                .block();
+
+        return kakaoTokenResponseDto.getAccessToken();
+    }
+
+    public KakaoUserInfoDto getUserInfoFromKakao(String accessToken) {
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl("https://kapi.kakao.com")
+                .defaultHeader("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
+                .build();
+
+        return webClient.get() // get 요청
+                .uri("/v2/user/me")
+                .header("Authorization", "Bearer " + accessToken) // 헤더에 토큰 추가
+                .retrieve()
+                .bodyToMono(KakaoUserInfoDto.class) // 응답을 DTO로 변환
                 .block();
     }
+
 }
