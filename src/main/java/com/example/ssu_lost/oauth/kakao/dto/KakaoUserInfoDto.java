@@ -12,6 +12,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KakaoUserInfoDto {
 
+    @JsonProperty("id")
     private Long id;
     @JsonProperty("connected_at")
     private String connectedAt;
