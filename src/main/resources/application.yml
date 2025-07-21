@@ -18,8 +18,13 @@ spring:
         format_sql: true
 
   kakao:
-    client_id: ${REST_API_KEY}
-    redirect_uri: http://localhost:8080/callback/kakao
+    kakao_client_id: ${KAKAO_REST_API_KEY}
+    kakao_redirect_uri: http://localhost:8080/callback/kakao
+
+  google:
+    google_client_id: ${GOOGLE_REST_API_KEY}
+    google_redirect_uri: http://localhost:8080/callback/google
+    google_client_secret: ${GOOGLE_CLIENT_SECRET}
 
   web:
     resources:
