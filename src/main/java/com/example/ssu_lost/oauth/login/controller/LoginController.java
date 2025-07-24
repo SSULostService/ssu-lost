@@ -1,7 +1,10 @@
-package com.example.ssu_lost.oauth.kakao.controller;
+package com.example.ssu_lost.oauth.login.controller;
 
 import com.example.ssu_lost.global.code.ResponseCode;
 import com.example.ssu_lost.global.response.ApiResponse;
+import com.example.ssu_lost.oauth.OAuthUserInfo;
+import com.example.ssu_lost.oauth.google.dto.GoogleUserInfoDto;
+import com.example.ssu_lost.oauth.google.service.GoogleService;
 import com.example.ssu_lost.oauth.kakao.dto.KakaoUserInfoDto;
 import com.example.ssu_lost.oauth.kakao.service.KakaoService;
 import lombok.RequiredArgsConstructor;
@@ -15,17 +18,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/")
-public class KakaoLoginController {
+public class LoginController {
 
     private final KakaoService kakaoService;
+    private final GoogleService googleService;
 
     @GetMapping("/callback/kakao")
-    public ApiResponse<KakaoUserInfoDto> callback(@RequestParam("code") String code) {
-
-        //String accessToken = kakaoService.getAccessTokenFromKakao(code);
-
+    public ApiResponse<KakaoUserInfoDto> callbackKakao(@RequestParam("code") String code) {
         KakaoUserInfoDto kakaoUserInfoDto = kakaoService.getUserInfo(code);
 
         return ApiResponse.onSuccess(ResponseCode.OK, kakaoUserInfoDto);
+    }
+
+    @GetMapping("/callback/google")
+    public ApiResponse<OAuthUserInfo> callbackGoogle(@RequestParam("code") String code) {
+        OAuthUserInfo oAuthUserInfo = googleService.getUserInfo(code);
+
+        return ApiResponse.onSuccess(ResponseCode.OK, oAuthUserInfo);
     }
 }

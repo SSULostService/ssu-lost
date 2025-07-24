@@ -36,6 +36,11 @@ public class KakaoUserInfoDto implements OAuthUserInfo {
         return this.kakaoAccount.getProfile().getNickname();
     }
 
+    @Override
+    public String getProfileImageUrl() {
+        return this.kakaoAccount.getProfile().getProfileImageUrl();
+    }
+
     @Getter
     @NoArgsConstructor
     @ToString

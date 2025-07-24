@@ -1,6 +1,7 @@
 package com.example.ssu_lost.oauth.google.service;
 
 import com.example.ssu_lost.enums.OAuthProvider;
+import com.example.ssu_lost.oauth.OAuthUserInfo;
 import com.example.ssu_lost.oauth.SocialLoginService;
 import com.example.ssu_lost.oauth.google.dto.GoogleTokenDto;
 import com.example.ssu_lost.oauth.google.dto.GoogleUserInfoDto;

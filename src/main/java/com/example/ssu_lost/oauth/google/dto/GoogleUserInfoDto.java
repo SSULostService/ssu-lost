@@ -35,4 +35,9 @@ public class GoogleUserInfoDto implements OAuthUserInfo {
     public OAuthProvider getProvider() {
         return OAuthProvider.GOOGLE;
     }
+
+    @Override
+    public String getProfileImageUrl() {
+        return this.picture;
+    }
 }

@@ -9,4 +9,6 @@ public interface OAuthUserInfo {
     OAuthProvider getProvider();
 
     String getName();
+
+    String getProfileImageUrl();
 }
