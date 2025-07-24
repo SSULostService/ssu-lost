@@ -17,7 +17,7 @@ import java.util.UUID;
 public class Member extends BaseEntity {
 
     @Id
-    @Column(name = "member_id", columnDefinition = "Binary(16)")
+    @Column(name = "member_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
     @Column(nullable = false, length = 50)
