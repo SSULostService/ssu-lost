@@ -13,10 +13,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class KakaoService {
 
-    @Value("${spring.kakao.kakao_client_id}")
+    @Value("${spring.kakao.client_id}")
     private String clientId;
 
-    @Value("${spring.kakao.kakao_redirect_uri}")
+    @Value("${spring.kakao.redirect_uri}")
     private String redirectUri;
 
     public String getAccessTokenFromKakao(String code) {

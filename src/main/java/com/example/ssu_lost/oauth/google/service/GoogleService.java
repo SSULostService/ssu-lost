@@ -15,13 +15,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class GoogleService {
 
-    @Value("${spring.google.google_client_id}")
+    @Value("${spring.google.client_id}")
     private String clientId;
 
-    @Value("${spring.google.google_redirect_uri}")
+    @Value("${spring.google.redirect_uri}")
     private String redirectUri;
 
-    @Value("${spring.google.google_client_secret}")
+    @Value("${spring.google.client_secret}")
     private String clientSecret;
 
     public String getAccessTokenFromGoogle(String code) {
