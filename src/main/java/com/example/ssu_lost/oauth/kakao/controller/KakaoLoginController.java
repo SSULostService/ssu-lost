@@ -20,7 +20,7 @@ public class KakaoLoginController {
     private final KakaoService kakaoService;
 
     @GetMapping("/callback/kakao")
-    public ApiResponse<?> callback(@RequestParam("code") String code) {
+    public ApiResponse<KakaoUserInfoDto> callback(@RequestParam("code") String code) {
 
         //String accessToken = kakaoService.getAccessTokenFromKakao(code);
 
