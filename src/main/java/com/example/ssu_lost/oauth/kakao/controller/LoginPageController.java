@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/login")
 public class LoginPageController {
 // kakao
-    @Value("${spring.kakao.kakao_client_id}")
+    @Value("${spring.kakao.client_id}")
     private String kakaoClientId;
 
-    @Value("${spring.kakao.kakao_redirect_uri}")
+    @Value("${spring.kakao.redirect_uri}")
     private String kakaoRedirectUri;
 //google
-    @Value("${spring.google.google_client_id}")
+    @Value("${spring.google.client_id}")
     private String googleClientId;
 
-    @Value("${spring.google.google_redirect_uri}")
+    @Value("${spring.google.redirect_uri}")
     private String googleRedirectUri;
 
 

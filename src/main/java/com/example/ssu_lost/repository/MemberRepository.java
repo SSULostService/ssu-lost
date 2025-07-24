@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface MemberRepository extends JpaRepository<Member, UUID> {
 
-    Optional<Member> findByOAuthProviderAndOAuthId(OAuthProvider oAuthProvider, String oAuthId);
+
 }
