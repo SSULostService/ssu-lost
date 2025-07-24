@@ -1,8 +1,9 @@
 package com.example.ssu_lost.entity;
 
+import com.example.ssu_lost.enums.OAuthProvider;
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
+        import lombok.*;
+        import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.UUID;
@@ -22,8 +23,9 @@ public class Member extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String memberName;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String oAuthProvider;
+    private OAuthProvider oAuthProvider;
 
     @Column(nullable = false)
     private String oAuthId;
