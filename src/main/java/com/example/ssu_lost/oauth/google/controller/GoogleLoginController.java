@@ -2,6 +2,7 @@ package com.example.ssu_lost.oauth.google.controller;
 
 import com.example.ssu_lost.global.code.ResponseCode;
 import com.example.ssu_lost.global.response.ApiResponse;
+import com.example.ssu_lost.oauth.google.service.GoogleService;
 import com.example.ssu_lost.oauth.kakao.dto.KakaoUserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class GoogleLoginController {
 
+    private final GoogleService googleService;
+
     @GetMapping("/callback/google")
     public ApiResponse<?> callback(@RequestParam("code") String code) {
-
-        return ApiResponse.onSuccess(ResponseCode.OK, code);
+        String accessToken = googleService.getAccessTokenFromGoogle(code);
+        return ApiResponse.onSuccess(ResponseCode.OK, accessToken);
     }
 }
