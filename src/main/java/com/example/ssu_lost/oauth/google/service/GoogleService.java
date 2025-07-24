@@ -1,6 +1,7 @@
 package com.example.ssu_lost.oauth.google.service;
 
 import com.example.ssu_lost.oauth.google.dto.GoogleTokenDto;
+import com.example.ssu_lost.oauth.google.dto.GoogleUserInfoDto;
 import com.example.ssu_lost.oauth.kakao.dto.KakaoTokenDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class GoogleService {
 
     @Value("${spring.google.google_client_id}")
@@ -45,5 +45,18 @@ public class GoogleService {
                 .block();
 
         return googleTokenDto.getAccessToken();
+    }
+
+    public GoogleUserInfoDto getUserInfoFromGoogle(String accessToken) {
+        WebClient webClient = WebClient.builder()
+                .baseUrl("https://www.googleapis.com")
+                .build();
+
+        return webClient.get()
+                .uri("/oauth2/v2/userinfo")
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .bodyToMono(GoogleUserInfoDto.class)
+                .block();
     }
 }
