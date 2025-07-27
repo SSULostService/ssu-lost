@@ -1,6 +1,6 @@
 package com.example.ssu_lost.controller;
 
-import com.example.ssu_lost.dto.LostItemWriteDto;
+import com.example.ssu_lost.dto.request.LostItemWriteDto;
 import com.example.ssu_lost.dto.response.LostItemHomeResponseDto;
 import com.example.ssu_lost.dto.response.LostItemListResponseDto;
 import com.example.ssu_lost.dto.response.LostItemResponseDto;
