@@ -22,7 +22,7 @@ public class LostItemService {
         this.lostItemRepository = lostItemRepository;
     }
 
-    public LostItemResponseDto createLostItem (LostItemWriteDto request, String memberId) {
+    public LostItemResponseDto createLostItem (LostItemWriteDto request) {
 
         LostItem lostItem =  request.toEntity();
 
