@@ -1,6 +1,5 @@
 package com.example.ssu_lost.global.code;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
