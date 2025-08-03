@@ -2,7 +2,6 @@ package com.example.ssu_lost.entity;
 
 import com.example.ssu_lost.enums.ItemStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -37,6 +36,6 @@ public class LostItem extends BaseEntity {
     private ItemStatus itemStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = true)
     private Member member;
 }
