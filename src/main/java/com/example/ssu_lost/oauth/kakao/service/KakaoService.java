@@ -1,5 +1,7 @@
 package com.example.ssu_lost.oauth.kakao.service;
 
+import com.example.ssu_lost.enums.OAuthProvider;
+import com.example.ssu_lost.oauth.SocialLoginService;
 import com.example.ssu_lost.oauth.kakao.dto.KakaoTokenDto;
 import com.example.ssu_lost.oauth.kakao.dto.KakaoUserInfoDto;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j
 @Service
-public class KakaoService {
+public class KakaoService implements SocialLoginService {
 
     @Value("${spring.kakao.client_id}")
     private String clientId;
@@ -41,7 +43,10 @@ public class KakaoService {
         return kakaoTokenResponseDto.getAccessToken();
     }
 
-    public KakaoUserInfoDto getUserInfoFromKakao(String accessToken) {
+    @Override
+    public KakaoUserInfoDto getUserInfo(String code) {
+
+        String accessToken = getAccessTokenFromKakao(code);
 
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://kapi.kakao.com")
@@ -56,4 +61,8 @@ public class KakaoService {
                 .block();
     }
 
+    @Override
+    public OAuthProvider getProviderName() {
+        return OAuthProvider.KAKAO;
+    }
 }

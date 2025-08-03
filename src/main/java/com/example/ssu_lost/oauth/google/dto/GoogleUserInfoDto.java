@@ -1,5 +1,7 @@
 package com.example.ssu_lost.oauth.google.dto;
 
+import com.example.ssu_lost.enums.OAuthProvider;
+import com.example.ssu_lost.oauth.OAuthUserInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -10,7 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GoogleUserInfoDto {
+public class GoogleUserInfoDto implements OAuthUserInfo {
 
     @JsonProperty("id")
     private String id;
@@ -23,4 +25,19 @@ public class GoogleUserInfoDto {
 
     @JsonProperty("email")
     private String email;
+
+    @Override
+    public String getProviderId() {
+        return this.id;
+    }
+
+    @Override
+    public OAuthProvider getProvider() {
+        return OAuthProvider.GOOGLE;
+    }
+
+    @Override
+    public String getProfileImageUrl() {
+        return this.picture;
+    }
 }
