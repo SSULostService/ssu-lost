@@ -1,14 +1,11 @@
-package com.example.ssu_lost.oauth.login.service;
+package com.example.ssu_lost.service;
 
 import com.example.ssu_lost.entity.Member;
 import com.example.ssu_lost.enums.OAuthProvider;
-import com.example.ssu_lost.global.code.ErrorCode;
-import com.example.ssu_lost.global.exception.LoginException;
 import com.example.ssu_lost.oauth.OAuthUserInfo;
 import com.example.ssu_lost.oauth.SocialLoginService;
 import com.example.ssu_lost.repository.MemberRepository;
 import com.example.ssu_lost.security.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

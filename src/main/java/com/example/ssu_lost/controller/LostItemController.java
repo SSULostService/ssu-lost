@@ -20,11 +20,10 @@ public class LostItemController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<LostItemResponseDto>> createLostItem(
-            @RequestBody LostItemWriteDto request,
-            @RequestHeader String memberId
+            @RequestBody LostItemWriteDto request
             // TO DO: 멤버 구현 시 결합, 임시로 memberId 사용
             ) {
-        LostItemResponseDto createdItem = lostItemService.createLostItem(request, memberId);
+        LostItemResponseDto createdItem = lostItemService.createLostItem(request);
         return ResponseEntity.ok(ApiResponse.onSuccess(ResponseCode.SUCCESS_CREATE_LOST_ITEM, createdItem));
     }
 
