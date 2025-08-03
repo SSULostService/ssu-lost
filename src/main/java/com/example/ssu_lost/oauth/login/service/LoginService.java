@@ -33,15 +33,7 @@ public class LoginService {
         };
 
         Member member = memberRepository.findBySocialLoginInfo(oAuthProvider, userInfo.getProviderId())
-                .orElseGet(() -> {
-                    Member newMember = Member.builder()
-                            .id(UUID.randomUUID())
-                            .memberName(userInfo.getName())
-                            .oAuthProvider(oAuthProvider)
-                            .oAuthId(userInfo.getProviderId())
-                            .build();
-                    return memberRepository.save(newMember);
-                });
+                .orElseGet(() -> memberRepository.save(Member.from(userInfo)));
 
         return jwtTokenProvider.createAccessToken(member.getId().toString());
     }

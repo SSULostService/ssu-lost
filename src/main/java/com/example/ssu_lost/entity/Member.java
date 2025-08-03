@@ -1,6 +1,7 @@
 package com.example.ssu_lost.entity;
 
 import com.example.ssu_lost.enums.OAuthProvider;
+import com.example.ssu_lost.oauth.OAuthUserInfo;
 import jakarta.persistence.*;
         import lombok.*;
         import org.hibernate.annotations.DynamicInsert;
@@ -29,4 +30,13 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false)
     private String oAuthId;
+
+    public static Member from(OAuthUserInfo userInfo) {
+        return Member.builder()
+                .id(UUID.randomUUID())
+                .memberName(userInfo.getName())
+                .oAuthProvider(userInfo.getProvider())
+                .oAuthId(userInfo.getProviderId())
+                .build();
+    }
 }
