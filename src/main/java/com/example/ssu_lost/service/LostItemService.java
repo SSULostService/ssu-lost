@@ -7,36 +7,47 @@ import com.example.ssu_lost.dto.response.LostItemResponseDto;
 import com.example.ssu_lost.entity.LostItem;
 import com.example.ssu_lost.repository.LostItemRepository;
 import com.example.ssu_lost.global.exception.NotFoundItemException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
+@RequiredArgsConstructor
 public class LostItemService {
 
     private final LostItemRepository lostItemRepository;
+    private final S3Service s3Service;
 
-    public LostItemService(LostItemRepository lostItemRepository) {
-        this.lostItemRepository = lostItemRepository;
-    }
+    public LostItemResponseDto createLostItem (
+            LostItemWriteDto request,
+            MultipartFile image
+    ) throws IOException {
 
-    public LostItemResponseDto createLostItem (LostItemWriteDto request) {
-
-        LostItem lostItem =  request.toEntity();
+        String imageUrl = s3Service.uploadImageFileToS3(image);
+        LostItem lostItem =  request.toEntity(imageUrl);
 
         return LostItemResponseDto.ofDetail(lostItemRepository.save(lostItem));
     }
 
-    public LostItemResponseDto getLostItemById (Long lostItemId){
+    public LostItemResponseDto getLostItemById (
+            Long lostItemId
+    ){
 
         return LostItemResponseDto
                 .ofDetail(lostItemRepository.findById(lostItemId)
                 .orElseThrow(NotFoundItemException::new));
     }
 
-    public LostItemListResponseDto getLostItemsForList (int page, int size) {
+    public LostItemListResponseDto getLostItemsForList(
+            int page,
+            int size
+    ){
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate"));
         Page<LostItem> pageInfo = lostItemRepository.findAll(pageable);
@@ -49,7 +60,9 @@ public class LostItemService {
         return LostItemHomeResponseDto.from(lostItemRepository.findTop9ByOrderByCreatedDateDesc());
     }
 
-    public void deleteLostItemById (Long lostItemId){
+    public void deleteLostItemById (
+            Long lostItemId
+    ){
 
         lostItemRepository.deleteById(lostItemId);
     }
