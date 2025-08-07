@@ -35,7 +35,7 @@ public class S3Service {
                 .contentType(file.getContentType())
                 .build();
 
-        s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
+        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
         // TO DO: 이미지 url 협의 후 수정
         String url = String.format("https://%s.s3.%s.amazonaws.com/%s",
