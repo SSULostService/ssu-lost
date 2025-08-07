@@ -12,11 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 소스코드 체크아웃
       - name: Checkout
         uses: actions/checkout@v3
 
-      # 2. JDK 세팅
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -72,7 +70,15 @@ jobs:
             docker stop ssulost-server || true
             docker rm ssulost-server || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/ssulost-server
-            docker run -d -p 8081:8080 --name ssulost-server ${{ secrets.DOCKER_USERNAME }}/ssulost-server
+            docker run -d -p 8081:8080 --name ssulost-server \
+            -e AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            -e AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            -e AWS_REGION="${{ secrets.AWS_REGION }}" \
+            -e AWS_S3_BUCKET_NAME="${{ secrets.AWS_S3_BUCKET_NAME }}" \
+            -e DB_URL="${{ secrets.DB_URL }}" \
+            -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
+            -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+            ${{ secrets.DOCKER_USERNAME }}/ssulost-server
 
             sudo systemctl reload nginx
             
