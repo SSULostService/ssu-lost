@@ -39,11 +39,12 @@ jobs:
       - name: Generate application.yml
         run: |
           mkdir -p ./src/main/resources
-          echo "${{ secrets.CD_APPLICATION }}" > ./src/main/resources/application.yml
-          cat ./src/main/resources/application.yml
+          touch ./src/main/resources/application.yml
+          printf '%s' "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
+        shell: bash
 
-      - name: Build Project
-        run: ./gradlew clean build -x test
+      - name: Build with gradle
+        run: ./gradlew build -x test
 
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -52,7 +53,6 @@ jobs:
       - name: Build Docker Image
         run: |
           docker rmi ${{ secrets.DOCKER_USERNAME }}/ssulost-server || true
-
           docker build -t ${{ secrets.DOCKER_USERNAME }}/ssulost-server .
 
       - name: Publish Image to Docker Hub
