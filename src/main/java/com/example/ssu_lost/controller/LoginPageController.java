@@ -1,4 +1,4 @@
-package com.example.ssu_lost.oauth.login.controller;
+package com.example.ssu_lost.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;

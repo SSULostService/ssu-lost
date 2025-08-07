@@ -3,8 +3,7 @@ package com.example.ssu_lost.entity;
 import com.example.ssu_lost.enums.OAuthProvider;
 import com.example.ssu_lost.oauth.OAuthUserInfo;
 import jakarta.persistence.*;
-        import lombok.*;
-        import org.hibernate.annotations.DynamicInsert;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.UUID;
