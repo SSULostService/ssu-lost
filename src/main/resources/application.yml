@@ -17,6 +17,30 @@ spring:
         show_sql: true
         format_sql: true
 
+  kakao:
+    client_id: ${KAKAO_REST_API_KEY}
+    redirect_uri: ${KAKAO_REDIRECT_URI}
+  google:
+    client_id: ${GOOGLE_REST_API_KEY}
+    redirect_uri: ${GOOGLE_REDIRECT_URI}
+    client_secret: ${GOOGLE_CLIENT_SECRET}
+
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
+    expiration-time: 3600000
   web:
     resources:
       add-mappings: false
+
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET_NAME}
+
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
+
+    region:
+      static: ${AWS_REGION}
+
