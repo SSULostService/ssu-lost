@@ -40,10 +40,11 @@ public class LostItemController {
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<LostItemListResponseDto>> getLostItemsForList(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String itemStatus
             // TO DO: 기획 확정 시 변경
     ) {
-        LostItemListResponseDto items = lostItemService.getLostItemsForList(page, size);
+        LostItemListResponseDto items = lostItemService.getLostItemsForList(itemStatus, page, size);
         return ResponseEntity.ok(ApiResponse.onSuccess(ResponseCode.SUCCESS_GET_LOST_ITEM_LIST, items));
     }
 

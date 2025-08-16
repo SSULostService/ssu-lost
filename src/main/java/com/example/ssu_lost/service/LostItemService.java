@@ -5,6 +5,7 @@ import com.example.ssu_lost.dto.response.LostItemHomeResponseDto;
 import com.example.ssu_lost.dto.response.LostItemListResponseDto;
 import com.example.ssu_lost.dto.response.LostItemResponseDto;
 import com.example.ssu_lost.entity.LostItem;
+import com.example.ssu_lost.enums.ItemStatus;
 import com.example.ssu_lost.repository.LostItemRepository;
 import com.example.ssu_lost.global.exception.NotFoundItemException;
 import lombok.RequiredArgsConstructor;
@@ -45,13 +46,18 @@ public class LostItemService {
     }
 
     public LostItemListResponseDto getLostItemsForList(
+            String itemStatus,
             int page,
             int size
     ){
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Page<LostItem> pageInfo = lostItemRepository.findAll(pageable);
 
+        if (itemStatus == null){
+            return LostItemListResponseDto.of(lostItemRepository.findAll(pageable));
+        }
+
+        Page<LostItem> pageInfo = lostItemRepository.findLostItemsByItemStatus(ItemStatus.fromString(itemStatus), pageable);
         return LostItemListResponseDto.of(pageInfo);
     }
 
