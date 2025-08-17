@@ -39,6 +39,6 @@
         </root>
     </springProfile>
 
-    <logger name="com.example.demo" level="DEBUG" />
+    <logger name="com.example.ssu_lost" level="DEBUG" />
 
 </configuration>
