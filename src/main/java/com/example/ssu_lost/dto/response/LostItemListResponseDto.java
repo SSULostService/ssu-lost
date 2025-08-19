@@ -9,7 +9,7 @@ public record LostItemListResponseDto (
         List<LostItemResponseDto> lostItems,
         int currentPage,
         int totalPages,
-        long elementsPerPage
+        long elementsThisPage
 ){
 
     public static LostItemListResponseDto of (Page<LostItem> response){
