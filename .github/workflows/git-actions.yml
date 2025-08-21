@@ -75,7 +75,7 @@ jobs:
 
             echo "✅ app1 업데이트 완료"
             sleep 10
-            curl -f http://localhost:8080/ || (echo "❌ app1 헬스체크 실패" && exit 1)
+            curl -f http://localhost:8081/ || (echo "❌ app1 헬스체크 실패" && exit 1)
 
       # Step 2: app2 교체
             docker-compose stop app2 || true
@@ -84,7 +84,7 @@ jobs:
 
             echo "✅ app2 업데이트 완료"
             sleep 10
-            curl -f http://localhost:8080/ || (echo "❌ app2 헬스체크 실패" && exit 1)
+            curl -f http://localhost:8082/ || (echo "❌ app2 헬스체크 실패" && exit 1)
 
       # Nginx Reload (SSL 적용 포함)
             docker exec nginx nginx -s reload || true
