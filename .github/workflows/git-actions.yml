@@ -87,4 +87,5 @@ jobs:
             curl -f http://localhost:8082/ || (echo "❌ app2 헬스체크 실패" && exit 1)
 
       # Nginx Reload (SSL 적용 포함)
-            docker exec nginx nginx -s reload || true
+            sudo systemctl reload nginx
+
