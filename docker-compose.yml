@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app1:
+    image: ${{secrets.DOCKER_USERNAME}}/ssulost-server:latest
+    container_name: app1
+    environment:
+      - AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+      - AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - AWS_REGION=${{ secrets.AWS_REGION }}
+      - AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }}
+      - DB_URL=${{ secrets.DB_URL }}
+      - DB_USERNAME=${{ secrets.DB_USERNAME }}
+      - DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+    ports:
+      - "8081:8080"
+
+  app2:
+    image: ${{secrets.DOCKER_USERNAME}}/ssulost-server:latest
+    container_name: app2
+    environment:
+      - AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+      - AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - AWS_REGION=${{ secrets.AWS_REGION }}
+      - AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }}
+      - DB_URL=${{ secrets.DB_URL }}
+      - DB_USERNAME=${{ secrets.DB_USERNAME }}
+      - DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+    ports:
+      - "8082:8080"
