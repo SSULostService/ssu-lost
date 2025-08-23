@@ -60,18 +60,14 @@ jobs:
       - name: Deploy on EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.EC2_SERVER_HOST }}
+          username: ${{ secrets.EC2_SERVER_USER }}
+          key: ${{ secrets.EC2_SERVER_KEY }}
           script: |
             cd /home/ubuntu/bongbaek-server
 
             export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-
-            export DOZZLE_USERNAME=${{ secrets.DOZZLE_USERNAME }}
-
-            export DOZZLE_PASSWORD=${{ secrets.DOZZLE_PASSWORD }}
-            
+          
             CURRENT_CONF=$(sudo readlink /etc/nginx/sites-enabled/current || echo "")
             
             if [[ "$CURRENT_CONF" == *"blue"* ]]; then
