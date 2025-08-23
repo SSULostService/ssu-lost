@@ -58,6 +58,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // 지정되지 않은 모든 예외 처리
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleAllExceptions(Exception e) {
+        e.printStackTrace();
         ErrorCode errorCode = ErrorCode._INTERNAL_SERVER_ERROR;
         return new ResponseEntity<>(
                 ApiResponse.onFailure(errorCode),
