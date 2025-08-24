@@ -82,17 +82,30 @@ jobs:
               NEW_PORT=8080
             fi
             
+            echo "🚀 Starting $NEW_SERVICE..."
             docker compose up -d $NEW_SERVICE 
-            sleep 10
             
-            curl -f http://localhost:$NEW_PORT/actuator/health || (echo "$NEW_SERVICE 헬스체크 실패" && exit 1)
-            sleep 2
+            echo "⏳ Waiting for $NEW_SERVICE to be healthy..."
+            for i in {1..12}; do
+              STATUS=$(docker inspect --format='{{.State.Health.Status}}' ${NEW_SERVICE}-container 2>/dev/null || echo "starting")
+              if [ "$STATUS" == "healthy" ]; then
+                echo "✅ $NEW_SERVICE is healthy!"
+                break
+              fi
+              if [ $i -eq 12 ]; then
+                echo "❌ $NEW_SERVICE healthcheck failed after 60s"
+                exit 1
+              fi
+              echo "Still starting... ($i/12)"
+              sleep 5
+            done
             
+            # Nginx 전환
             sudo ln -sf $NEW_CONF /etc/nginx/sites-enabled/current
             sudo systemctl reload nginx
-            
-            docker compose stop $OLD_SERVICE
-            
-            docker compose rm -f $OLD_SERVICE
+            echo "🔄 Nginx switched to $NEW_SERVICE"
 
+            # 구버전 종료 및 정리
+            docker compose stop $OLD_SERVICE
+            docker compose rm -f $OLD_SERVICE
             docker image prune -f
