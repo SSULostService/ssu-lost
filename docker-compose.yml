@@ -1,12 +1,20 @@
 services:
+  # nginx
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
   blue:
     image: fpwjsem/ssulost-server:latest
     container_name: blue-container
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
 
   green:
     image: fpwjsem/ssulost-server:latest
     container_name: green-container
-    ports:
-      - "8081:8080"
+    expose:
+      - "8081"
