@@ -82,12 +82,10 @@ jobs:
               NEW_PORT=8080
             fi
             
-            docker compose down
-
             docker compose up -d $NEW_SERVICE 
             
             curl -f http://localhost:$NEW_PORT/actuator/health || (echo "$NEW_SERVICE 헬스체크 실패" && exit 1)
-            sleep 2
+            sleep 15
             
             sudo ln -sf $NEW_CONF /etc/nginx/sites-enabled/current
             sudo systemctl reload nginx
