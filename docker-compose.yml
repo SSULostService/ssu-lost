@@ -1,12 +1,12 @@
 services:
   blue:
-    image: ${DOCKER_USERNAME}/ssulost-server:latest
+    image: fpwjsem/ssulost-server:latest
     container_name: blue-container
     ports:
       - "8080:8080"
 
   green:
-    image: ${DOCKER_USERNAME}/ssulost-server:latest
+    image: fpwjsem/ssulost-server:latest
     container_name: green-container
     ports:
       - "8081:8080"
