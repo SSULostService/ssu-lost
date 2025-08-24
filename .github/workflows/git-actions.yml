@@ -79,6 +79,9 @@ jobs:
               NEW_PORT=8080
             fi
             
+            echo "🚀 Pulling latest image..."
+            docker pull $DOCKER_USERNAME/ssulost-server:latest
+            
             echo "🚀 Removing old $NEW_SERVICE container (if exists)..."
             docker compose rm -f $NEW_SERVICE || true
             
