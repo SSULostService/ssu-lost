@@ -86,11 +86,12 @@ jobs:
             docker compose up -d $NEW_SERVICE 
             
             echo "⏳ Waiting for $NEW_SERVICE to be healthy..."
-            
-            # EC2 host 기준 healthcheck
             for i in {1..12}; do
-            # localhost:$NEW_PORT로 actuator health 확인
-            if curl -sf http://localhost:$NEW_PORT/actuator/health >/dev/null; then
+            # 호스트 포트 기준 health 체크
+            NEW_PORT=$([ "$NEW_SERVICE" == "blue" ] && echo 8080 || echo 8081)
+            STATUS=$(curl -s -f http://localhost:$NEW_PORT/actuator/health >/dev/null 2>&1 && echo "healthy" || echo "starting")
+            
+            if [ "$STATUS" == "healthy" ]; then
             echo "✅ $NEW_SERVICE is healthy!"
             break
             fi
