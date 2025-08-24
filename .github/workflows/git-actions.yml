@@ -62,6 +62,7 @@ jobs:
           key: ${{ secrets.EC2_SERVER_KEY }}
           script: |
             cd /home/ubuntu/bongbaek-server
+            
             export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
             
             CURRENT_CONF=$(sudo readlink /etc/nginx/sites-enabled/current || echo "")
