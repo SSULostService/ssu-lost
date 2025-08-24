@@ -86,19 +86,24 @@ jobs:
             docker compose up -d $NEW_SERVICE 
             
             echo "⏳ Waiting for $NEW_SERVICE to be healthy..."
+            
+            # EC2 host 기준 healthcheck
             for i in {1..12}; do
-              STATUS=$(docker inspect --format='{{.State.Health.Status}}' ${NEW_SERVICE}-container 2>/dev/null || echo "starting")
-              if [ "$STATUS" == "healthy" ]; then
-                echo "✅ $NEW_SERVICE is healthy!"
-                break
-              fi
-              if [ $i -eq 12 ]; then
-                echo "❌ $NEW_SERVICE healthcheck failed after 60s"
-                exit 1
-              fi
-              echo "Still starting... ($i/12)"
-              sleep 5
+            # localhost:$NEW_PORT로 actuator health 확인
+            if curl -sf http://localhost:$NEW_PORT/actuator/health >/dev/null; then
+            echo "✅ $NEW_SERVICE is healthy!"
+            break
+            fi
+          
+            if [ $i -eq 12 ]; then
+            echo "❌ $NEW_SERVICE healthcheck failed after 60s"
+            exit 1
+            fi
+          
+            echo "Still starting... ($i/12)"
+            sleep 5
             done
+
             
             # Nginx 전환
             sudo ln -sf $NEW_CONF /etc/nginx/sites-enabled/current
