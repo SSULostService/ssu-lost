@@ -71,6 +71,7 @@ jobs:
           key: ${{ secrets.EC2_SERVER_KEY }}
           source: "./docker-compose.yml,./proxy"
           target: "/home/ubuntu/bongbaek-server"
+          rm: true       # <-- 기존 폴더/파일 삭제 후 업로드
 
       - name: Deploy on EC2
         uses: appleboy/ssh-action@master
