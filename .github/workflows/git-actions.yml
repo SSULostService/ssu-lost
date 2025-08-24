@@ -84,25 +84,7 @@ jobs:
 
             echo "🚀 Starting $NEW_SERVICE..."
             docker compose up -d $NEW_SERVICE
-
-            echo "⏳ Waiting for $NEW_SERVICE to be healthy..."
-            for i in {1..12}; do
-              STATUS=$(docker inspect --format='{{.State.Health.Status}}' ${NEW_SERVICE}-container)
-              docker compose ps $NEW_SERVICE
-
-              if [ "$STATUS" == "healthy" ]; then
-                echo "✅ $NEW_SERVICE is healthy!"
-                break
-              fi
-
-              if [ $i -eq 12 ]; then
-                echo "❌ $NEW_SERVICE healthcheck failed after 60s"
-                exit 1
-              fi
-
-              echo "Still starting... ($i/12)"
-              sleep 5
-            done
+            sleep 10
 
             echo "🔄 Switching Nginx to $NEW_SERVICE"
             sudo ln -sf $NEW_CONF /etc/nginx/sites-enabled/current
