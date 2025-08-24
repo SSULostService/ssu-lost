@@ -83,9 +83,10 @@ jobs:
             fi
             
             docker compose up -d $NEW_SERVICE 
+            sleep 10
             
             curl -f http://localhost:$NEW_PORT/actuator/health || (echo "$NEW_SERVICE 헬스체크 실패" && exit 1)
-            sleep 15
+            sleep 2
             
             sudo ln -sf $NEW_CONF /etc/nginx/sites-enabled/current
             sudo systemctl reload nginx
