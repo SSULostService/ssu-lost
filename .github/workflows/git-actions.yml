@@ -81,13 +81,31 @@ jobs:
           key: ${{ secrets.EC2_SERVER_KEY }}
           script: |
             cd /home/ubuntu/bongbaek-server
-            
+
             export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
 
-            docker pull fpwjsem/ssulost-server:latest
-            
-            docker compose up -d
+            # 새 이미지 pull
+            docker pull $DOCKER_USERNAME/ssulost-server:latest
 
-            sudo systemctl reload nginx
-            
-            docker image prune -f
+            # === 1️⃣ green 배포 ===
+            docker compose up -d green
+
+            # green 헬스체크 완료 대기
+            echo "Waiting for green-container health..."
+            until [ "$(docker inspect -f '{{.State.Health.Status}}' green-container)" = "healthy" ]; do
+                sleep 5
+            done
+            echo "green-container is healthy ✅"
+
+            # === 2️⃣ blue 배포 ===
+            docker compose up -d blue
+
+            # blue 헬스체크 완료 대기
+            echo "Waiting for blue-container health..."
+            until [ "$(docker inspect -f '{{.State.Health.Status}}' blue-container)" = "healthy" ]; do
+                sleep 5
+            done
+            echo "blue-container is healthy ✅"
+
+            # Nginx reload
+            docker compose up -d nginx
