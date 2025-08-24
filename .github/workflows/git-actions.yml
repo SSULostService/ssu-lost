@@ -62,11 +62,10 @@ jobs:
           key: ${{ secrets.EC2_SERVER_KEY }}
           script: |
             cd /home/ubuntu/bongbaek-server
-
             export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-
+            
             CURRENT_CONF=$(sudo readlink /etc/nginx/sites-enabled/current || echo "")
-
+            
             if [[ "$CURRENT_CONF" == *"blue"* ]]; then
               NEW_SERVICE="green"
               OLD_SERVICE="blue"
@@ -78,36 +77,36 @@ jobs:
               NEW_CONF="/etc/nginx/sites-available/blue.conf"
               NEW_PORT=8080
             fi
-
+            
             echo "🚀 Removing old $NEW_SERVICE container (if exists)..."
             docker compose rm -f $NEW_SERVICE || true
-
+            
             echo "🚀 Starting $NEW_SERVICE..."
             docker compose up -d $NEW_SERVICE
-
+            
             echo "⏳ Waiting for $NEW_SERVICE to be healthy..."
             for i in {1..12}; do
               STATUS=$(docker inspect --format='{{.State.Health.Status}}' ${NEW_SERVICE}-container)
               docker compose ps $NEW_SERVICE
-
+            
               if [ "$STATUS" == "healthy" ]; then
                 echo "✅ $NEW_SERVICE is healthy!"
                 break
               fi
-
+            
               if [ $i -eq 12 ]; then
                 echo "❌ $NEW_SERVICE healthcheck failed after 60s"
                 exit 1
               fi
-
+            
               echo "Still starting... ($i/12)"
               sleep 5
             done
-
+            
             echo "🔄 Switching Nginx to $NEW_SERVICE"
             sudo ln -sf $NEW_CONF /etc/nginx/sites-enabled/current
             sudo systemctl reload nginx
-
+            
             echo "🚪 Stopping and removing old $OLD_SERVICE container"
             docker compose stop $OLD_SERVICE || true
             docker compose rm -f $OLD_SERVICE || true
