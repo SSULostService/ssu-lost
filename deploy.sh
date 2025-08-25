@@ -1,9 +1,13 @@
 set -e
 
 DOCKER_USERNAME=$1
+DOCKER_PASSWORD=$2
 APP_NAME="ssulost-server"
 BLUE_CONTAINER="blue-container"
 GREEN_CONTAINER="green-container"
+
+# 0. Docker Login
+docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
 
 # 현재 실행중인 컨테이너 확인
 if docker ps --format '{{.Names}}' | grep -q "$BLUE_CONTAINER"; then
@@ -35,6 +39,10 @@ done
 
 if [ $count -ge $timeout ]; then
   echo "헬스체크 실패 ❌"
+  # 실패 시 새 컨테이너 정리, 기존 서비스 유지(롤백)
+  docker stop ${IDLE}-container
+  docker rm ${IDLE}-container
+  echo "롤백 실행: 이전 서비스 유지 ⏪"
   exit 1
 fi
 echo "$IDLE-container is healthy ✅"
