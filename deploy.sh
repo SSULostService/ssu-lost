@@ -1,7 +1,5 @@
 set -e
 
-DOCKER_USERNAME=$1
-DOCKER_PASSWORD=$2
 APP_NAME="ssulost-server"
 BLUE_CONTAINER="blue-container"
 GREEN_CONTAINER="green-container"

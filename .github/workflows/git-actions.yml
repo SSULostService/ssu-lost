@@ -81,5 +81,10 @@ jobs:
           key: ${{ secrets.EC2_SERVER_KEY }}
           script: |
             cd /home/ubuntu/bongbaek-server
+            
+            export DOCKER_USERNAME=${{secrets.DOCKER_USERNAME}}
+            
+            export DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD}}
+            
             chmod +x deploy.sh
             ./deploy.sh ${{ secrets.DOCKER_USERNAME }}
