@@ -8,7 +8,7 @@ CONTAINER="-container"
 # 버전 정보 가져오기
 DEPLOY_VERSION=$(tr -d '\r' < version)
 
-PREV_VERSION=$(docker inspect --format='{{index .Config.Image}}' "$GREEN_CONTAINER" 2>/dev/null | awk -F: '{print $2}')
+PREV_VERSION=$(docker inspect --format='{{index .Config.Image}}' "$GREEN$CONTAINER" 2>/dev/null | awk -F: '{print $2}')
 
 export APP_VERSION="$DEPLOY_VERSION"
 
