@@ -21,8 +21,8 @@ docker pull "$DOCKER_USERNAME/$APP_NAME:$DEPLOY_VERSION"
 # 새 버전 컨테이너 실행
 for SERVICE in "$GREEN" "$BLUE"; do
 
-  docker compose stop "$SERVICE" || true
-  docker compose rm -f "$SERVICE" || true
+  docker stop "$SERVICE$CONTAINER" || true
+  docker rm -f "$SERVICE$CONTAINER" || true
   docker compose up -d "$SERVICE"
 
   timeout=120
