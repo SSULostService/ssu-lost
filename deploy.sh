@@ -6,7 +6,7 @@ GREEN="green"
 GREEN_CONTAINER="green-container"
 
 # 버전 정보 가져오기
-source ./version.env
+read -r DEPLOY_VERSION < version
 
 PREV_VERSION=$(docker inspect --format='{{index .Config.Image}}' "$GREEN_CONTAINER" 2>/dev/null | awk -F: '{print $2}')
 
