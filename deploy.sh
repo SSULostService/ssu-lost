@@ -1,47 +1,53 @@
 set -e
 
 APP_NAME="ssulost-server"
-BLUE_CONTAINER="blue-container"
+BLUE="blue"
+GREEN="green"
 GREEN_CONTAINER="green-container"
 
-# 0. Docker Login
-docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+# 버전 정보 가져오기
+source ./version.env
 
-# 현재 실행중인 컨테이너 확인
-if docker ps --format '{{.Names}}' | grep -q "$BLUE_CONTAINER"; then
-  CURRENT="blue"
-  IDLE="green"
-  IDLE_PORT=8081
-else
-  CURRENT="green"
-  IDLE="blue"
-  IDLE_PORT=8080
-fi
+PREV_VERSION=$(docker inspect --format='{{index .Config.Image}}' "$GREEN_CONTAINER" 2>/dev/null | awk -F: '{print $2}')
 
-echo "현재 실행중: $CURRENT → 교체 대상: $IDLE"
+# DOCKER 로그인
+echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-# 1. 새 이미지 pull
-docker pull $DOCKER_USERNAME/$APP_NAME:latest
+# 이미지 가져오기
+docker pull $DOCKER_USERNAME/$APP_NAME:"$DEPLOY_VERSION"
 
-# 2. idle 컨테이너 실행 (새 이미지)
-docker compose up -d $IDLE
+# Redis & Dozzle 실행
+docker compose up -d redis dozzle
 
-# 3. idle 컨테이너 헬스체크
-echo "Waiting for $IDLE-container health..."
-timeout=120
-count=0
-until [ "$(docker inspect -f '{{.State.Health.Status}}' ${IDLE}-container)" = "healthy" ] || [ $count -ge $timeout ]; do
-  sleep 5
-  count=$((count+5))
+# 새 버전 컨테이너 실행
+for CONTAINER in "$GREEN" "$BLUE"; do
+
+  docker compose stop "$CONTAINER" || true
+  docker compose rm -f "$CONTAINER" || true
+
+  APP_VERSION="$DEPLOY_VERSION" docker compose up -d "$CONTAINER"
+
+  timeout=120
+  count=0
+  until [ "$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER")" = "healthy" ] || [ $count -ge $timeout ]; do
+    sleep 5
+    count=$((count+5))
+  done
+
+  if [ "$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER")" != "healthy" ]; then
+    echo "헬스 체크 실패 → 롤백"
+
+    docker stop "$CONTAINER" || true
+    docker rm "$CONTAINER" || true
+
+    APP_VERSION="$PREV_VERSION" docker compose up -d "$CONTAINER"
+    exit 1
+  fi
+
+  echo "헬스 체크 성공"
 done
-echo "$IDLE-container is healthy ✅"
 
-# 4. Nginx 트래픽 전환
-echo "Reloading Nginx..."
+# Nginx 트래픽 전환
 docker compose up -d nginx
 
-# 5. 기존 컨테이너 종료
-docker stop ${CURRENT}-container
-docker rm ${CURRENT}-container
-
-echo "배포 완료! 현재 서비스: $IDLE"
+docker image prune -f
