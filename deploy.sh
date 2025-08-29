@@ -23,7 +23,6 @@ for SERVICE in "$GREEN" "$BLUE"; do
 
   docker compose stop "$SERVICE" || true
   docker compose rm -f "$SERVICE" || true
-
   docker compose up -d "$SERVICE"
 
   timeout=120
@@ -39,7 +38,7 @@ for SERVICE in "$GREEN" "$BLUE"; do
     docker stop "$SERVICE$CONTAINER" || true
     docker rm "$SERVICE$CONTAINER" || true
 
-    docker compose up -d "$SERVICE"
+    APP_VERSION="$PREV_VERSION" docker compose up -d "$SERVICE"
     exit 1
   fi
 
