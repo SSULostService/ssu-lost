@@ -6,7 +6,7 @@ GREEN="green"
 GREEN_CONTAINER="green-container"
 
 # 버전 정보 가져오기
-read -r DEPLOY_VERSION < version
+DEPLOY_VERSION=$(tr -d '\r' < version)
 
 PREV_VERSION=$(docker inspect --format='{{index .Config.Image}}' "$GREEN_CONTAINER" 2>/dev/null | awk -F: '{print $2}')
 
@@ -14,7 +14,7 @@ PREV_VERSION=$(docker inspect --format='{{index .Config.Image}}' "$GREEN_CONTAIN
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 # 이미지 가져오기
-docker pull $DOCKER_USERNAME/$APP_NAME:"$DEPLOY_VERSION"
+docker pull "$DOCKER_USERNAME/$APP_NAME:$DEPLOY_VERSION"
 
 # Redis & Dozzle 실행
 docker compose up -d redis dozzle
