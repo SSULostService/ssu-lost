@@ -51,8 +51,7 @@ jobs:
 
       - name: Build Docker Image & Push
         run: |
-          DEPLOY_VERSION=$(cat version | tr -d '\n')
-          echo "Deploy version: $DEPLOY_VERSION"
+          DEPLOY_VERSION=$(cat version | tr -d '\r\n')
           
           docker build -t ${{ secrets.DOCKER_USERNAME }}/ssulost-server:$DEPLOY_VERSION . --no-cache
           docker push ${{ secrets.DOCKER_USERNAME }}/ssulost-server:$DEPLOY_VERSION
