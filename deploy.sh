@@ -10,14 +10,13 @@ DEPLOY_VERSION=$(tr -d '\r' < version)
 
 PREV_VERSION=$(docker inspect --format='{{index .Config.Image}}' "$GREEN_CONTAINER" 2>/dev/null | awk -F: '{print $2}')
 
+export APP_VERSION="$DEPLOY_VERSION"
+
 # DOCKER 로그인
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 # 이미지 가져오기
 docker pull "$DOCKER_USERNAME/$APP_NAME:$DEPLOY_VERSION"
-
-# Redis & Dozzle 실행
-docker compose up -d redis dozzle
 
 # 새 버전 컨테이너 실행
 for CONTAINER in "$GREEN" "$BLUE"; do
@@ -25,7 +24,7 @@ for CONTAINER in "$GREEN" "$BLUE"; do
   docker compose stop "$CONTAINER" || true
   docker compose rm -f "$CONTAINER" || true
 
-  APP_VERSION="$DEPLOY_VERSION" docker compose up -d "$CONTAINER"
+  docker compose up -d "$CONTAINER"
 
   timeout=120
   count=0
@@ -40,7 +39,7 @@ for CONTAINER in "$GREEN" "$BLUE"; do
     docker stop "$CONTAINER" || true
     docker rm "$CONTAINER" || true
 
-    APP_VERSION="$PREV_VERSION" docker compose up -d "$CONTAINER"
+    docker compose up -d "$CONTAINER"
     exit 1
   fi
 
