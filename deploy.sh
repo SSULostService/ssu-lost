@@ -3,7 +3,7 @@ set -e
 APP_NAME="ssulost-server"
 BLUE="blue"
 GREEN="green"
-GREEN_CONTAINER="green-container"
+CONTAINER="-container"
 
 # 버전 정보 가져오기
 DEPLOY_VERSION=$(tr -d '\r' < version)
@@ -19,27 +19,27 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 docker pull "$DOCKER_USERNAME/$APP_NAME:$DEPLOY_VERSION"
 
 # 새 버전 컨테이너 실행
-for CONTAINER in "$GREEN" "$BLUE"; do
+for SERVICE in "$GREEN" "$BLUE"; do
 
-  docker compose stop "$CONTAINER" || true
-  docker compose rm -f "$CONTAINER" || true
+  docker compose stop "$SERVICE" || true
+  docker compose rm -f "$SERVICE" || true
 
-  docker compose up -d "$CONTAINER"
+  docker compose up -d "$SERVICE"
 
   timeout=120
   count=0
-  until [ "$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER")" = "healthy" ] || [ $count -ge $timeout ]; do
+  until [ "$(docker inspect -f '{{.State.Health.Status}}' "$SERVICE$CONTAINER")" = "healthy" ] || [ $count -ge $timeout ]; do
     sleep 5
     count=$((count+5))
   done
 
-  if [ "$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER")" != "healthy" ]; then
+  if [ "$(docker inspect -f '{{.State.Health.Status}}' "$SERVICE$CONTAINER")" != "healthy" ]; then
     echo "헬스 체크 실패 → 롤백"
 
-    docker stop "$CONTAINER" || true
-    docker rm "$CONTAINER" || true
+    docker stop "$SERVICE$CONTAINER" || true
+    docker rm "$SERVICE$CONTAINER" || true
 
-    docker compose up -d "$CONTAINER"
+    docker compose up -d "$SERVICE"
     exit 1
   fi
 
