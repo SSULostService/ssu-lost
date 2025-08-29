@@ -52,9 +52,12 @@ jobs:
       - name: Build Docker Image & Push
         run: |
           DEPLOY_VERSION=$(cat version | tr -d '\r\n')
+          echo ">>> DEPLOY_VERSION: $DEPLOY_VERSION"
+          
           
           docker build -t ${{ secrets.DOCKER_USERNAME }}/ssulost-server:$DEPLOY_VERSION . --no-cache
           docker push ${{ secrets.DOCKER_USERNAME }}/ssulost-server:$DEPLOY_VERSION
+          docker images ${{ secrets.DOCKER_USERNAME }}/ssulost-server --format "{{.Repository}}:{{.Tag}}"
 
       - name: Ensure remote dir
         uses: appleboy/ssh-action@master
@@ -89,4 +92,4 @@ jobs:
             export DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD}}
             
             chmod +x deploy.sh
-            ./deploy.sh ${{ secrets.DOCKER_USERNAME }}
+            ./deploy.sh 
