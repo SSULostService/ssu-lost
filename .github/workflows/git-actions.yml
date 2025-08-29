@@ -54,10 +54,16 @@ jobs:
           DEPLOY_VERSION=$(cat version | tr -d '\r\n')
           echo ">>> DEPLOY_VERSION: $DEPLOY_VERSION"
           
+          # Buildx로 빌드 + 푸시
+          docker buildx build \
+            --platform linux/amd64 \
+            --push \
+            -t ${{ secrets.DOCKER_USERNAME }}/ssulost-server:$DEPLOY_VERSION .
           
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/ssulost-server:$DEPLOY_VERSION . --no-cache
-          docker push ${{ secrets.DOCKER_USERNAME }}/ssulost-server:$DEPLOY_VERSION
-          docker images ${{ secrets.DOCKER_USERNAME }}/ssulost-server --format "{{.Repository}}:{{.Tag}}"
+          # 확인용: 현재 태그 확인
+          echo "Images with DEPLOY_VERSION:"
+          docker buildx imagetools inspect ${{ secrets.DOCKER_USERNAME }}/ssulost-server:$DEPLOY_VERSION
+
 
       - name: Ensure remote dir
         uses: appleboy/ssh-action@master
