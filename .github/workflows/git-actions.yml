@@ -43,6 +43,11 @@ jobs:
           cat ./src/main/resources/application.yml
         shell: bash
 
+      - name: Read deploy version
+        id: get_version
+        run: |
+          echo "DEPLOY_VERSION=$(grep DEPLOY_VERSION version | cut -d'\"' -f2)" >> $GITHUB_ENV
+
       - name: Build with gradle
         run: ./gradlew build -x test
 
@@ -51,10 +56,10 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/ssulost-server . --no-cache
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/ssulost-server:${{ env.DEPLOY_VERSION }} . --no-cache
 
       - name: Publish Image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/ssulost-server
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/ssulost-server:${{ env.DEPLOY_VERSION }}
 
       - name: Ensure remote dir
         uses: appleboy/ssh-action@master
@@ -71,7 +76,7 @@ jobs:
           host: ${{ secrets.EC2_SERVER_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SERVER_KEY }}
-          source: "./docker-compose.yml,./proxy,./deploy.sh,./version.env"
+          source: "./docker-compose.yml,./proxy,./deploy.sh,./version"
           target: "/home/ubuntu/bongbaek-server"
           rm: true       # <-- 기존 폴더/파일 삭제 후 업로드
 
