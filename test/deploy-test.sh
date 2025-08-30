@@ -1,7 +1,7 @@
 set -e
 
 APP_NAME="ssulost-server"
-BLUE="blue"
+GREEN="green"
 CONTAINER="-container"
 
 # 버전 정보 가져오기
@@ -15,34 +15,33 @@ export APP_VERSION="$DEPLOY_VERSION"
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 # 이미지 가져오기
+
 docker pull "$DOCKER_USERNAME/$APP_NAME:$DEPLOY_VERSION"
 
 # 새 버전 컨테이너 실행
 
-docker stop "$BLUE$CONTAINER" || true
-docker rm -f "$BLUE$CONTAINER" || true
-docker compose up -d "$BLUE"
+docker stop "$GREEN$CONTAINER" || true
+docker rm -f "$GREEN$CONTAINER" || true
+docker compose up -d "$GREEN"
 
+# Health check
 timeout=120
 count=0
-until [ "$(docker inspect -f '{{.State.Health.Status}}' "$BLUE$CONTAINER")" = "healthy" ] || [ $count -ge $timeout ]; do
+until [ "$(docker inspect -f '{{.State.Health.Status}}' "$GREEN$CONTAINER")" = "healthy" ] || [ $count -ge $timeout ]; do
   sleep 5
   count=$((count+5))
 done
 
-if [ "$(docker inspect -f '{{.State.Health.Status}}' "$BLUE$CONTAINER")" != "healthy" ]; then
+if [ "$(docker inspect -f '{{.State.Health.Status}}' "$GREEN$CONTAINER")" != "healthy" ]; then
     echo "헬스 체크 실패 → 롤백"
 
-  docker stop "$BLUE$CONTAINER" || true
-  docker rm "$BLUE$CONTAINER" || true
+  docker stop "$GREEN$CONTAINER" || true
+  docker rm "$GREEN$CONTAINER" || true
 
-  APP_VERSION="$PREV_VERSION" docker compose up -d "$BLUE"
+  APP_VERSION="$PREV_VERSION" docker compose up -d "$GREEN"
   exit 1
 fi
 
 echo "헬스 체크 성공"
-
-# Nginx 트래픽 전환
-docker compose up -d nginx
 
 docker image prune -f

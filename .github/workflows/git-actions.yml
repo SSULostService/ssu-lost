@@ -52,29 +52,60 @@ jobs:
       - name: Build Docker Image & Push
         run: |
           DEPLOY_VERSION=$(cat version | tr -d '\r\n')
-          echo ">>> DEPLOY_VERSION: $DEPLOY_VERSION"
           
           # Buildx로 빌드 + 푸시
           docker buildx build \
             --platform linux/amd64 \
             --push \
             -t ${{ secrets.DOCKER_USERNAME }}/ssulost-server:$DEPLOY_VERSION .
-          
-          # 확인용: 현재 태그 확인
-          echo "Images with DEPLOY_VERSION:"
-          docker buildx imagetools inspect ${{ secrets.DOCKER_USERNAME }}/ssulost-server:$DEPLOY_VERSION
 
-
-      - name: Ensure remote dir
+      - name: Generate directory
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_SERVER_HOST }}
-          username: ubuntu
+          username: ${{ secrets.EC2_SERVER_USER }}
           key: ${{ secrets.EC2_SERVER_KEY }}
           script: |
             mkdir -p /home/ubuntu/bongbaek-server
 
-      - name: Upload files
+      - name: Generate directory
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_SECOND_SERVER_HOST }}
+          username: ${{ secrets.EC2_SERVER_USER }}
+          key: ${{ secrets.EC2_SERVER_KEY }}
+          script: |
+            mkdir -p /home/ubuntu/bongbaek-server
+
+      # 1. Green 서버 배포
+      - name: Upload to Test Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AWS_SECOND_SERVER_HOST }}
+          username: ${{ secrets.EC2_SERVER_USER }}
+          key: ${{ secrets.EC2_SERVER_KEY }}
+          source: "./test,./version"
+          target: "/home/ubuntu/bongbaek-server"
+          rm: true
+
+      - name: Deploy Test Server
+        id: deploy-green
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_SECOND_SERVER_HOST }}
+          username: ${{ secrets.EC2_SERVER_USER }}
+          key: ${{ secrets.EC2_SERVER_KEY }}
+          script: |
+            cd /home/ubuntu/bongbaek-server/test
+            
+            export DOCKER_USERNAME=${{secrets.DOCKER_USERNAME}}
+            
+            export DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD}}
+            
+            chmod +x deploy-test.sh
+            ./deploy-test.sh
+
+      - name: Upload to Main Server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_SERVER_HOST }}

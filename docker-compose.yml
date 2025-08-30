@@ -10,24 +10,12 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - blue
-      - green
 
   blue:
     image: fpwjsem/ssulost-server:${APP_VERSION}
     container_name: blue-container
     ports:
       - "8080:8080"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  green:
-    image: fpwjsem/ssulost-server:${APP_VERSION}
-    container_name: green-container
-    ports:
-      - "8081:8080"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 10s
