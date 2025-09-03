@@ -21,6 +21,7 @@ do
   timeout=120
   count=0
   until [ "$(docker inspect -f '{{.State.Health.Status}}' "$SERVICE")" = "healthy" ] || [ $count -ge $timeout ]; do
+    echo "2분 동안 5초 간격으로 헬스 체크 중)"
     sleep 5
     count=$((count+5))
   done
@@ -39,6 +40,6 @@ do
 done
 
 # Nginx 트래픽 전환
-docker compose up -d nginx
+docker exec nginx nginx -s reload
 
 docker image prune -f
