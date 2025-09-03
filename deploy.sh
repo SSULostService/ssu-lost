@@ -2,45 +2,41 @@ set -e
 
 APP_NAME="ssulost-server"
 BLUE="blue"
-CONTAINER="-container"
-
-# 버전 정보 가져오기
-DEPLOY_VERSION=$(tr -d '\r' < version)
-
-PREV_VERSION=$(docker inspect --format='{{index .Config.Image}}' "$GREEN$CONTAINER" 2>/dev/null | awk -F: '{print $2}')
-
-export APP_VERSION="$DEPLOY_VERSION"
+GREEN="green"
 
 # DOCKER 로그인
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 # 이미지 가져오기
-docker pull "$DOCKER_USERNAME/$APP_NAME:$DEPLOY_VERSION"
+docker pull "$DOCKER_USERNAME/$APP_NAME"
 
 # 새 버전 컨테이너 실행
 
-docker stop "$BLUE$CONTAINER" || true
-docker rm -f "$BLUE$CONTAINER" || true
-docker compose up -d "$BLUE"
+for SERVICE in BLUE GREEN
+do
+  docker stop "$SERVICE" || true
+  docker rm -f "$SERVICE" || true
+  docker compose up -d "$SERVICE"
 
-timeout=120
-count=0
-until [ "$(docker inspect -f '{{.State.Health.Status}}' "$BLUE$CONTAINER")" = "healthy" ] || [ $count -ge $timeout ]; do
-  sleep 5
-  count=$((count+5))
+  timeout=120
+  count=0
+  until [ "$(docker inspect -f '{{.State.Health.Status}}' "$SERVICE")" = "healthy" ] || [ $count -ge $timeout ]; do
+    sleep 5
+    count=$((count+5))
+  done
+
+  if [ "$(docker inspect -f '{{.State.Health.Status}}' "$SERVICE")" != "healthy" ]; then
+      echo "헬스 체크 실패"
+
+    docker stop "$SERVICE" || true
+    docker rm "$SERVICE" || true
+
+    exit 1
+  fi
+
+  echo "$SERVICE 컨테이너 헬스 체크 성공"
+
 done
-
-if [ "$(docker inspect -f '{{.State.Health.Status}}' "$BLUE$CONTAINER")" != "healthy" ]; then
-    echo "헬스 체크 실패 → 롤백"
-
-  docker stop "$BLUE$CONTAINER" || true
-  docker rm "$BLUE$CONTAINER" || true
-
-  APP_VERSION="$PREV_VERSION" docker compose up -d "$BLUE"
-  exit 1
-fi
-
-echo "헬스 체크 성공"
 
 # Nginx 트래픽 전환
 docker compose up -d nginx

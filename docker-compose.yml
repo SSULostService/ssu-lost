@@ -12,10 +12,21 @@ services:
       - blue
 
   blue:
-    image: fpwjsem/ssulost-server:${APP_VERSION}
-    container_name: blue-container
+    image: fpwjsem/ssulost-server:latest
+    container_name: blue
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  green:
+    image: fpwjsem/ssulost-server:latest
+    container_name: green
+    ports:
+      - "8081:8080"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 10s
