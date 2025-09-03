@@ -12,7 +12,7 @@ docker pull "$DOCKER_USERNAME/$APP_NAME"
 
 # 새 버전 컨테이너 실행
 
-for SERVICE in BLUE GREEN
+for SERVICE in $BLUE $GREEN
 do
   docker stop "$SERVICE" || true
   docker rm -f "$SERVICE" || true
