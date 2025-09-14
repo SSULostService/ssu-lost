@@ -16,6 +16,7 @@ services:
 
   blue:
     image: fpwjsem/ssulost-server:latest
+    container_name: blue
     ports:
       - "8080:8080"
     healthcheck:
@@ -28,6 +29,7 @@ services:
 
   green:
     image: fpwjsem/ssulost-server:latest
+    container_name: green
     ports:
       - "8081:8080"
     healthcheck:
