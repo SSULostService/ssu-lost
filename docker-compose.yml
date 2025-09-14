@@ -7,36 +7,39 @@ services:
       - "443:443"
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro   # certbot이 발급한 ssl cert 위치
     depends_on:
       - blue
       - green
+    networks:
+      - ssulost-net
 
   blue:
     image: fpwjsem/ssulost-server:latest
-    container_name: blue
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"   # 내부 포트만 노출, 외부 매핑 안 해도 됨
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - ssulost-net
 
   green:
     image: fpwjsem/ssulost-server:latest
-    container_name: green
-    ports:
-      - "8081:8080"
+    expose:
+      - "8080"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - ssulost-net
 
   dozzle:
     image: amir20/dozzle:latest
-    container_name: dozzle
     ports:
       - "9999:8080"
     volumes:
@@ -45,3 +48,9 @@ services:
     restart: always
     environment:
       DOZZLE_AUTH_PROVIDER: simple
+    networks:
+      - ssulost-net
+
+networks:
+  ssulost-net:
+    driver: bridge
