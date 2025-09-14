@@ -39,8 +39,6 @@ jobs:
           mkdir -p ./src/main/resources
           touch ./src/main/resources/application.yml
           printf '%s' "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
-          echo "===== application.yml 내용 확인 ====="
-          cat ./src/main/resources/application.yml
         shell: bash
 
       - name: Build with gradle
@@ -51,7 +49,6 @@ jobs:
 
       - name: Build Docker Image & Push
         run: |          
-          # Buildx로 빌드 + 푸시
           docker buildx build \
             --platform linux/amd64 \
             --push \
@@ -61,15 +58,6 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_SERVER_HOST }}
-          username: ${{ secrets.EC2_SERVER_USER }}
-          key: ${{ secrets.EC2_SERVER_KEY }}
-          script: |
-            mkdir -p /home/ubuntu/ssulost-server
-
-      - name: Generate directory
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_SECOND_SERVER_HOST }}
           username: ${{ secrets.EC2_SERVER_USER }}
           key: ${{ secrets.EC2_SERVER_KEY }}
           script: |
